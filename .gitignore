@@ -1,0 +1,21 @@
+# --- Python 缓存 / 构建产物 ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+*.egg
+
+# --- 虚拟环境 ---
+.venv/
+venv/
+env/
+
+# --- 编辑器 / OS ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- 工具状态（codewhale）---
+.codewhale/state/
+.codewhale/workflow-runs.jsonl
