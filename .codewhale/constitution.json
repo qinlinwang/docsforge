@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "protected_invariants": [
+    "所有Python代码必须遵循PEP8规范"
+  ]
+}

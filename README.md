@@ -40,6 +40,38 @@ docsforge check backend/app/main.py docs/api.docsforge.md
 
 不指定 `--out` 时打印到 stdout，方便预览。
 
+## 自身文档即示例
+
+本项目**自己的文档库**就是"标准文档目录结构"的活示例：既说明 docsforge 怎么用，
+也示范它要产出的文档该长什么样。看完下面的结构，`docsforge scan/check` 该产出什么
+就有直观印象。
+
+```
+docs/
+├── index.md                    # 入口 + 文档全景表
+├── getting-started.md          # 快速上手
+├── reference/                  # ── 生成区（scan 自动填，勿手改）──
+│   ├── index.md                模块/类/函数索引
+│   ├── api-routes.md           API 路由分组表
+│   └── config.md               配置参考表
+├── guides/                     # ── 手写区（人工维护）──
+│   ├── deployment.md           部署指南
+│   └── migration.md            迁移指南
+└── topics/                     # ── 手写区（人工维护）──
+    ├── architecture.md         架构说明
+    └── referencing-guidelines.md 注解规范
+```
+
+- **生成区（reference/）**带 `<!-- BEGIN/END GENERATED -->` 标记，对应源码里的
+  `docs:` 注解，由 `docsforge scan` 掌管、`docsforge check` 校验。
+- **手写区（guides/、topics/）**人工维护，scan 绝不触碰——这是"生成与手写"
+  物理隔离的演示。
+- 整套骨架由 `docsforge.yaml` 的 `structure:` 那段 manifest 描述
+  （目标形态，配置驱动落地后由 `docsforge init` 一键生成）。
+
+> 说明：reference/ 下的生成区目前是**目标形态占位**；多文件扫描（S4）与
+> YAML manifest（L1）落地后，将真正由本工具的 `scan`/`init` 驱动填入。
+
 ## 命令
 
 ```
@@ -128,16 +160,21 @@ class TypeScriptOpenAPIHandler:
 ## 外部生态定位
 
 docsforge 在"文档即代码"工具生态中的定位与差异化依据，见本仓库
-[《文档生成工具生态调研一览》](../docs/design/docgen-tool-ecosystem.md)
+[《文档生成工具生态调研一览》](docs/design/docgen-tool-ecosystem.md)
 （含与 apidoc / mkdocstrings / Doxygen / Sphinx 等的对比）。
 
-## roadmap（尚未实现）
+## roadmap
 
-- [ ] `entry_points` 自动发现第三方 handler 插件
-- [ ] 配置驱动（YAML）：声明扫描哪些文件、如何分组
-- [ ] 文档站点渲染（接入 MkDocs/VitePress 而非裸 Markdown）
-- [ ] 时序图生成器集成（当前仅识别 `docs:seq` 标记，渲染交给外部工具）
-- [ ] 更多内置 handler：TypeScript/Go/Java
+面向用户价值的功能清单与优先级（含具体场景、现状对照、实施顺序）见
+[`docs/design/roadmap.md`](docs/design/roadmap.md)。摘要：
+
+**下一里程碑：多文件 / 目录扫描** —— 让"一次生成整个项目文档"成立，
+是所有后续功能（配置驱动、跨语言覆盖）的共同土壤。
+
+- 产出物：配置参考表（`docs:config`）、CLI 命令参考、模块/类/函数索引、图表
+- 质量：缺失覆盖告警 + 规范 lint（把"文档必须补齐"变成机器强制）
+- 集成：YAML 配置驱动、站点化输出（MkDocs/VitePress）、插件生态（`entry_points`）
+- 覆盖：TypeScript → Go → Java 等更多语言/框架 handler
 
 ## License
 

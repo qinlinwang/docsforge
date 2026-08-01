@@ -25,6 +25,10 @@ class LanguageHandler(Protocol):
 
     name: str
 
+    #: 该语言支持哪些源码扩展名（含点，如 {".py", ".pyw"}）。
+    #: 多文件扫描（docsforge.scan）用它过滤目录/glob 展开出的文件清单。
+    extensions: tuple[str, ...]
+
     def scan(self, path: str | Path) -> list[TaggedDeclaration]:
         """扫描给定源码文件，返回带 docs: 标签的声明列表。"""
         ...

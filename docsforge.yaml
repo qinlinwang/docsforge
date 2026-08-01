@@ -1,0 +1,33 @@
+# docsforge.yaml —— 项目文档 manifest（目标形态）
+#
+# ⚠️ 本文件是"标准文档目录结构"与 YAML 配置驱动（roadmap L1）的目标形状示例。
+#    当前代码尚未解析它（多文件扫描 S4、manifest L1 均未落地），仅供设计对照。
+#
+# 用途：声明项目类型 → docsforge 决定推荐目录骨架 + 各章节内容来源（topic），
+#       由 `docsforge init` 生成骨架、`docsforge scan` 填充生成区、`check` 校验。
+
+project:
+  name: docsforge
+  type: python-library     # 项目类型 → 决定推荐骨架（library / backend / cli / infra ...）
+  handler: python_fastapi  # 语言/框架适配器（可多个）
+
+paths:
+  # 扫描哪些源码（多文件 / glob，S4 落地后用）
+  inputs:
+    - "docsforge/**/*.py"
+  # 文档输出根目录（标准骨架从这里展开）
+  out: docs
+
+# 标准文档骨架：reference/=生成区，guides|topics=手写区
+structure:
+  - { path: index.md,                 kind: handwritten }
+  - { path: getting-started.md,       kind: handwritten }
+  - { path: "reference/index.md",     kind: generated, token: module-index,     topic: index }
+  - { path: "reference/api-routes.md", kind: generated, token: api-routes,      topic: api,    group: "reference" }
+  - { path: "reference/config.md",    kind: generated, token: config-reference, topic: config }
+  - { path: "guides/deployment.md",   kind: handwritten }
+  - { path: "guides/migration.md",    kind: handwritten }
+  - { path: "topics/architecture.md", kind: handwritten }
+  - { path: "topics/referencing-guidelines.md", kind: handwritten }
+
+# 参照 docs/index.md 的"文档全景"表 —— 两者应保持一致

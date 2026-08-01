@@ -34,3 +34,16 @@ def create_ticket():
 # 普通函数：没写 docs: 标签，不会被扫描进文档
 def _helper():
     return 0
+
+
+# --- 配置参考示例（docs:config → config-reference 渲染器）---
+# 模块级配置常量，写 docs:config 注解即可被扫描进配置参考表。
+
+# docs:config key="服务端口" env="PORT" default="8000" desc="HTTP 服务监听端口"
+PORT: int = 8000
+
+# docs:config key="最大重试次数" default="3" desc="请求失败后的最大重试次数"
+MAX_RETRIES = 3
+
+# 没写 docs:config 注解的普通常量不会进文档
+_SECRET_KEY = "s3cr3t"

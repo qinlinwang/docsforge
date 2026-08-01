@@ -20,6 +20,7 @@ class TaggedDeclaration:
         docs_tags: parse_docs_tags 的结果，形如 {"api": {...}, "seq": {}}。
         position: 声明所在源码行的行号（1 基）。
         source: 源码文本（可选，供需要回读的渲染器使用）。
+        source_path: 声明所在的源文件路径（字符串，多文件扫描时用于分组/回查）。
         extra: 语言/框架相关的附加字段（如 FastAPI 的 method/path），
             由 handler 自由填充；渲染器按需读取。
     """
@@ -28,6 +29,7 @@ class TaggedDeclaration:
     docs_tags: dict[str, dict[str, str]] = field(default_factory=dict)
     line: int = 0
     source: str = ""
+    source_path: str = field(default="")
     extra: dict[str, Any] = field(default_factory=dict)
 
     def has_tag(self, topic: str) -> bool:
