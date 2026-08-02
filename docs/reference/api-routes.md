@@ -1,24 +1,23 @@
 # API 路由参考
 
 > ⚠️ **生成区**：此页内容由 `docsforge scan` 从源码 `docs:api` 注解自动生成，
-> 请勿手工编辑。以下是**目标形态占位**：真实的生成区由 scan 写入并带
-> `<!-- BEGIN/END GENERATED -->` 标记。
+> 请勿手工编辑。每次源码变更后重新运行 `docsforge scan` 更新。
 
 <!-- BEGIN GENERATED: api-routes -->
-
-### 系统
-
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/health` | 健康检查 |
+<!-- 由 docsforge 从源码 `docs:` 注解自动生成，请勿手工编辑 -->
 
 ### 工单
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `/api/tickets` | 工单列表 |
-| POST | `/api/tickets` | 创建工单 |
+| POST | `/api/tickets` | 创建一张新工单（覆盖上文） |
 
+### 系统
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/api/health` | 健康检查 |
 <!-- END GENERATED: api-routes -->
 
 ## 说明

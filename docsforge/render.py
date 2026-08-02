@@ -1,4 +1,6 @@
 """
+docs:index summary="Markdown 渲染器：按 token 分派的注册表机制，IR → Markdown"
+
 Markdown 渲染器：把 TaggedDeclaration 的规范 IR 渲染成 Markdown。
 
 全部**语言无关**：只消费 TaggedDeclaration（extra 里的 method/path/summary
@@ -15,6 +17,7 @@ S1：渲染器改为**按 token 分派**。核心思想：
 """
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Callable
 
 from .model import TaggedDeclaration
@@ -54,6 +57,7 @@ def available_tokens() -> list[str]:
     return sorted(_RENDERERS)
 
 
+# docs:index summary="按 token 路由到对应渲染器，是渲染器的统一入口"
 def render(token: str, decls: list[TaggedDeclaration]) -> str:
     """按 token 路由到对应渲染器，产出一段 Markdown 正文。
 
@@ -79,6 +83,7 @@ def render(token: str, decls: list[TaggedDeclaration]) -> str:
 # ---------------------------------------------------------------------------
 # api-routes 渲染器（现状保留，行为不变）
 # ---------------------------------------------------------------------------
+# docs:index summary="按 group 分组的 API 路由 Markdown 表格"
 @register_renderer("api-routes")
 def render_api_grouped_table(decls: list[TaggedDeclaration]) -> str:
     """把 API 路由声明渲染成按 group 分组的 Markdown 表格。
@@ -110,14 +115,63 @@ def render_api_grouped_table(decls: list[TaggedDeclaration]) -> str:
     return "\n".join(out)
 
 
-def group_by_topic(decls: list[TaggedDeclaration], topic: str) -> list[TaggedDeclaration]:
-    """返回声明了指定主题标签的声明列表。"""
-    return [d for d in decls if d.has_tag(topic)]
+# docs:index summary="按模块+类/函数分组、含源码位置的模块索引表"
+@register_renderer("module-index")
+def render_module_index(decls: list[TaggedDeclaration]) -> str:
+    """把带 `docs:index` 注解的模块/类/函数渲染成模块索引表。
+
+    来源：模块 docstring、类 docstring、函数注释中的 `docs:index` 标签。
+    按模块分组，展示每个模块的类和公开函数。
+
+    表列：声明 | 类型 | 说明 | 定义位置
+    """
+    index_decls = [d for d in decls if d.has_tag("index")]
+    if not index_decls:
+        return ""
+
+    # 按文件分组
+    by_file: dict[str, list[TaggedDeclaration]] = {}
+    for d in index_decls:
+        by_file.setdefault(d.source_path, []).append(d)
+
+    out: list[str] = []
+    for src_path in sorted(by_file):
+        items = by_file[src_path]
+        # 用模块级声明的 index.summary 作为模块描述
+        mod_name = Path(src_path).stem if src_path else ""
+        mod_desc = ""
+        for d in items:
+            if d.extra.get("kind") == "module":
+                t = d.tag("index")
+                mod_desc = t.get("summary", "")
+                break
+
+        out.append(f"### `{mod_name}`")
+        if mod_desc:
+            out.append(f"> {mod_desc}")
+        out.append("")
+        out.append("| 声明 | 类型 | 说明 | 位置 |")
+        out.append("|---|---|---|---|")
+
+        for d in items:
+            kind = d.extra.get("kind") or "function"
+            if kind == "module":
+                continue  # 模块描述已在上方标题处理
+            t = d.tag("index")
+            desc = t.get("summary", "")
+            # 类型中文映射
+            kind_cn = {"class": "类", "function": "函数"}.get(kind, kind)
+            loc = f"`{Path(src_path).name}:{d.line}`"
+            out.append(f"| `{d.name}` | {kind_cn} | {desc} | {loc} |")
+
+        out.append("")
+    return "\n".join(out)
 
 
 # ---------------------------------------------------------------------------
 # config-reference 渲染器（S2-MVP）
 # ---------------------------------------------------------------------------
+# docs:index summary="按 key/环境变量/默认值/说明 四列的配置参考表"
 @register_renderer("config-reference")
 def render_config_reference(decls: list[TaggedDeclaration]) -> str:
     """把带 `docs:config` 注解的配置声明渲染成配置参考表。
@@ -157,5 +211,6 @@ __all__ = [
     "render",
     "render_api_grouped_table",
     "render_config_reference",
+    "render_module_index",
     "group_by_topic",
 ]

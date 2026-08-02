@@ -1,4 +1,6 @@
 """
+docs:index summary="中间表示 IR：TaggedDeclaration 数据类，承载 docs_tags/extra/source_path"
+
 docsforge 的中间表示（IR）：一条"被 docs: 注解标记的源码声明"。
 
 Handler（各语言适配器）从源码提取出这些对象；渲染器（render.py）消费它们。
@@ -11,6 +13,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
+# docs:index summary="IR 数据类：一条带 docs: 注解的源码声明（name/docs_tags/extra/source_path）"
 @dataclass
 class TaggedDeclaration:
     """源码中一处携带 `docs:` 标签的声明（函数/类/方法…）。

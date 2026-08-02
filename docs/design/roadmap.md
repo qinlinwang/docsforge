@@ -30,7 +30,7 @@
 | **API 路由分组表** | 按分组归类的 方法/路径/说明 表 | ✅ 已有 |
 | **配置参考表**（`docs:config`） | 配置项 / 环境变量 / 默认值 / 说明，所有后端与基础设施项目都要 | ✅ 已有（MVP：`--token config-reference`）|
 | **CLI 命令参考**（`docs:cli`） | 命令行工具自文档化（参数/用法/示例） | ❌ |
-| **模块 / 类 / 函数索引** | 库与 SDK 类项目的公共 API 地图 | ❌ |
+| **模块 / 类 / 函数索引** | 库与 SDK 类项目的公共 API 地图（`docs:index` 注解 + `module-index` 渲染器） | ✅ 已完成 |
 | **数据模型 / 图表** | schema 表、时序图（`docs:seq` 标记）、架构图 | ❌（仅识别标记） |
 | **标准目录骨架**（`docsforge init`） | 每种项目类型有一套推荐的文档目录结构：`reference/`（生成区）+ `guides/topics`（手写区），机器生成与人写物理隔开 | ❌ 是 L1 的核心目标 |
 
@@ -103,7 +103,7 @@
 |---|---|---|---|
 | S1 | 渲染器按 topic 分派（新产出物=新渲染器+新 token） | render + cli | ✅ 已完成（`render()` 注册表 + `--token` 多值）|
 | S2 | `docs:config` 配置参考表 | render + handlers/python | ✅ 已完成（MVP：config-reference 渲染器）|
-| S3 | Python handler 覆盖类/模块/配置项 | handlers/python | ✅ 已完成（MVP：识别模块/类级 `docs:config` 常量）|
+| S3 | Python handler 覆盖类/模块/配置项 | handlers/python | ✅ 已完成（配置常量 + 模块 docstring + class 定义）|
 | S4 | `scan()` 多文件/目录扫描 ⭐ | registry + handlers + cli | ✅ 已完成（无依赖）|
 | L1 | YAML manifest 配置驱动（**含标准文档目录结构 + `docsforge init`**）：声明项目类型 → 每类项目有推荐骨架（`reference/` 生成区 + `guides/topics` 手写区），产出章节写入对应目录 | manifest 解析 + skeleton + cli | S4 |
 | L2 | TypeScript / Go / Java handler | handlers | S4 |
@@ -157,3 +157,4 @@ docsforge 仓库自带标准文档骨架（`docs/` + `docsforge.yaml`），因�
 | 08-01 | S1 渲染器按 token 分派完成：`render.py` 新增 `@register_renderer(token)` 注册表 + `render(token, decls)`；`--token` 支持多值（`action="append"`），未知 token 报错退出码 2；新增产出物=写渲染器+装饰器一行 | S1 | ✅ 已实施 |
 | 08-01 | S2/S3 MVP 完成：`docs:config` 配置参考表 + Python handler 识别模块/类级配置常量（`_config_assignment`）| S2/S3 | ✅ 已实施 |
 | 08-01 | **下一步建议**：CLI 命令参考（docs:cli，index）与类/函数索引（module-index），覆盖 SDK/库/命令行工具 | S3/S1 | ⚖️ 讨论中 |
+| 08-01 | **module-index 渲染器已实现**：新增 `render_module_index` 令牌渲染器（按模块分组 + 类/函数/位置列）；handler 增强识别模块 docstring 和 class 定义；docsforge 全部 9 个模块已写 `docs:index` 注解；`docs/reference/index.md` 生成区已由工具自驱动填入并验证无漂移，api-routes 生成区同步与 verify 通过 | S3 | ✅ 已实施 |
