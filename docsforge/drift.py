@@ -1,4 +1,6 @@
 """
+docs:index summary="漂移检查：生成区替换 + 幂等替换 + check_drift 校验"
+
 漂移检查（drift）：生成区与"重新生成结果"的一致性校验。
 
 文档的自动生成区用 `<!-- BEGIN GENERATED: <id> -->` … `<!-- END GENERATED: <id> -->`
@@ -21,6 +23,7 @@ def section_markers(token: str) -> tuple[str, str]:
     return f"<!-- BEGIN GENERATED: {token} -->", f"<!-- END GENERATED: {token} -->"
 
 
+# docs:index summary="构造规范生成区（BEGIN/END GENERATED 标记包裹）"
 def render_section(token: str, body_lines: list[str]) -> str:
     """构造规范生成区，首尾不加多余空行，段落间空一行。"""
     start, end = section_markers(token)
@@ -86,6 +89,7 @@ def collapse_blank_lines(text: str, max_blank: int = 2) -> str:
     return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 
 
+# docs:index summary="校验文档生成区与源码注解是否一致（True=无漂移）"
 def check_drift(content: str, expected_section: str, token: str) -> bool:
     """校验文档里现有生成区与期望的一致。返回 True 表示无漂移。"""
     existing = extract_section(content, token)

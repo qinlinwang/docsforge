@@ -1,4 +1,6 @@
 """
+docs:index summary="多文件扫描（S4）：resolve_inputs + scan_files，目录/glob → IR 聚合"
+
 多文件扫描（S4）：把"单个源码文件"升级为"一次扫描整个项目"。
 
 设计原则：**多文件展开是语言无关的通用能力**，绝不放进某个语言 handler 里重复
@@ -49,6 +51,7 @@ def _expand_one(raw: str, extensions: Sequence[str]) -> list[Path]:
     return sorted(candidates)
 
 
+# docs:index summary="把文件/目录/glob 展开为去重、排序的源码文件清单"
 def resolve_inputs(paths: Iterable[str | Path], extensions: Sequence[str]) -> list[Path]:
     """把多个输入参数（文件/目录/glob）展开成去重、排序后的源码文件清单。
 
@@ -70,6 +73,7 @@ def resolve_inputs(paths: Iterable[str | Path], extensions: Sequence[str]) -> li
     return out
 
 
+# docs:index summary="用指定 handler 扫描多文件/目录/glob 并聚合所有声明"
 def scan_files(
     handler_name: str,
     paths: Iterable[str | Path],

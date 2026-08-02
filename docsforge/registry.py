@@ -1,4 +1,6 @@
 """
+docs:index summary="Handler 协议 + 注册表（插件点）：LanguageHandler / @register / get_handler"
+
 Handler 协议与注册表：docsforge 的**插件点**。
 
 不同语言/框架只有"如何从源码提取声明附近的注释块"不同。为支持跨语言，
@@ -20,6 +22,7 @@ from .model import TaggedDeclaration
 from .tags import parse_docs_tags
 
 
+# docs:index summary="语言适配器协议：实现 scan(path) → list[TaggedDeclaration]"
 class LanguageHandler(Protocol):
     """一个语言/框架的"注释提取适配器"。"""
 
@@ -38,6 +41,7 @@ class LanguageHandler(Protocol):
 _REGISTRY: dict[str, type[LanguageHandler]] = {}
 
 
+# docs:index summary="类装饰器：把 Handler 类按 name 注册到全局注册表"
 def register(name: str):
     """类装饰器：注册一个 handler。"""
 

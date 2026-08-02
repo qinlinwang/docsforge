@@ -1,4 +1,6 @@
 """
+docs:index summary="命令行入口：argparse CLI（scan/check/handlers 三个子命令）"
+
 docsforge CLI。
 
 用法：
@@ -115,6 +117,7 @@ def cmd_handlers(args) -> int:
     return 0
 
 
+# docs:index summary="CLI 入口：argparse 解析三个子命令（scan/check/handlers）"
 def main() -> None:
     parser = argparse.ArgumentParser(prog="docsforge", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)

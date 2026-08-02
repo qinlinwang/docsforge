@@ -1,4 +1,6 @@
 """
+docs:index summary="Python/FastAPI handler：AST 遍历提取函数/类/模块/配置的 docs: 注解"
+
 内置 handler：Python + FastAPI。
 
 它把 `tools/docs/annotations.py` 里的"Python/FastAPI 提取逻辑"抽成
@@ -117,6 +119,7 @@ def _config_assignment(
     )
 
 
+# docs:index summary="扫描 Python 文件，提取带 docs: 标签的函数/类/模块/配置声明"
 @register("python_fastapi")
 class PythonFastAPIHandler:
     """扫描 Python 文件，返回所有带 `docs:` 标签的函数声明。
@@ -137,7 +140,41 @@ class PythonFastAPIHandler:
         out: list[TaggedDeclaration] = []
         src_path = str(p)
 
+        # --- 模块级 docstring（docs:index / docs:api 等标签可放在模块 docstring 中）---
+        module_doc = ast.get_docstring(tree) or ""
+        if module_doc:
+            mod_tags = tags_from_comment(module_doc)
+            if mod_tags:
+                out.append(
+                    TaggedDeclaration(
+                        name=p.stem,
+                        docs_tags=mod_tags,
+                        line=1,
+                        source=module_doc,
+                        source_path=src_path,
+                        extra={"kind": "module"},
+                    )
+                )
+
         for node in ast.walk(tree):
+            # --- 类定义（带 docs:index / docs:config 注解的类级声明）---
+            if isinstance(node, ast.ClassDef):
+                cls_doc = ast.get_docstring(node) or ""
+                above = _collect_comments_above(lines, node.lineno)
+                tags = tags_from_comment(above + "\n" + cls_doc)
+                if tags:
+                    out.append(
+                        TaggedDeclaration(
+                            name=node.name,
+                            docs_tags=tags,
+                            line=node.lineno,
+                            source=cls_doc,
+                            source_path=src_path,
+                            extra={"kind": "class"},
+                        )
+                    )
+                continue  # 类体内部的赋值不另当配置
+
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 doc = ast.get_docstring(node) or ""
                 above = _collect_comments_above(lines, node.lineno)

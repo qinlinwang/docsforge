@@ -1,4 +1,6 @@
 """
+docs:index summary="语言无关的 `docs:` 标签解析器，正则匹配 key=&quot;value&quot; 键值对"
+
 docsforge — 从源码 `docs:` 注释注解自动生成文档。
 
 本模块提供 **语言无关** 的 `docs:` 标签解析器。不同语言只有"如何从源码
@@ -21,6 +23,7 @@ _DOCS_TAG_RE = re.compile(r'docs:(\w+)((?:\s+\w+="[^"]*")*)')
 _KEY_VALUE_RE = re.compile(r'(\w+)="([^"]*)"')
 
 
+# docs:index summary="从注释文本解析 docs: 标签，返回 {主题: {键: 值}}"
 def parse_docs_tags(text: str) -> dict[str, dict[str, str]]:
     """从注释/文档字符串文本中解析所有 `docs:` 标签。
 
