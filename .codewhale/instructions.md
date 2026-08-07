@@ -34,9 +34,9 @@
 ### 项目模块结构速览（讨论时的共同语言）
 
 - `docsforge/scan.py` —— S4 多文件/目录/glob 扫描（`resolve_inputs` + `scan_files`，已实现）
-- `docsforge/render.py` —— 渲染器；当前只有 API 路由表，**S1 将改造成按 topic 分派**
+- `docsforge/render.py` —— 渲染器按 **token 分派**（S1 已完成：`@register_renderer` 注册表 + `--token` 多值）
 - `docsforge/drift.py` —— 生成区替换 + 漂移检查
-- `docsforge/handlers/python_fastapi.py` —— 唯一内置语言适配器（待扩展 S3 / L2）
+- `docsforge/handlers/python_fastapi.py` —— 唯一内置语言适配器（S3 已完成：类/模块/配置项识别；L2 多语言待扩展）
 - `docsforge.yaml` —— 目标形态 manifest（L1 落地前代码不解析）
 
 架构主线：`tags`（解析注解）→ `registry/handlers`（按语言提取）→ `render`（渲染）

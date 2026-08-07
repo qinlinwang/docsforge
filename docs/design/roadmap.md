@@ -69,9 +69,10 @@
 
 ## 三、现状对照：给了多少，缺多少
 
-- **已经能用**：API 路由分组表、漂移检查、生成区幂等替换、`--anchor` 插入、**多文件/目录/glob 扫描（S4）**、CLI 三命令。
-- **最重要的缺口**：**渲染器按 topic 分派（S1）** 与**多产出物**（配置参考表、CLI 参考、类/函数索引）——没有后者，"多种类型的项目各能得到什么标准文档"这个价值还不成立；它是 YAML 配置驱动（L1）的前提。
-- **其次是"产出物"**：配置参考表、CLI 参考、类/函数索引——这些决定"多种类型的项目"到底能各得到什么标准文档。
+- **已经能用（S1–S4）**：渲染器按 token 分派（S1）、配置参考表（S2）、Python handler 覆盖类/模块/配置项（S3）、多文件/目录/glob 扫描（S4）；API 路由分组表 + 模块/类/函数索引、漂移检查、生成区幂等替换、`--anchor` 插入、CLI 三命令。
+- **最重要的缺口（L1）**：**YAML manifest 配置驱动 + `docsforge init`**——声明项目类型 → 每类项目有推荐文档骨架（`reference/` 生成区 + `guides/topics` 手写区），`scan`/`check` 从 manifest 读取配置一次跑全量。它是"按项目类型差异化"与所有跨语言扩展的 base（见 WS-4）。
+- **其次**：CLI 命令参考（`docs:cli` 渲染器，覆盖命令行工具类型项目，WS-5）；跨语言 handler（TS → Go → Java，L2）。
+- **已知问题**：Python handler 会把 docstring 中的文档示例（如 `docs:config` / `docs:api` 伪注解）误解析为真实注解，导致对 `docsforge/**/*.py` 的 config-reference 扫描出现误报（WS-6 待修）。
 - **长期差异化**：缺失覆盖告警 + 规范 lint（把"质量要求"变成机器强制）、拖进 CI 的漂移门槛、插件生态。
 
 ---
@@ -81,13 +82,13 @@
 不是按技术依赖，而是按"用户今天最想要什么依次给"：
 
 1. ~~多文件扫描~~ **（S4 已完成）**——让"整个项目"成为可能的共同土壤已就位
-2. **渲染器按 topic 分派**——② 打通"新增产出物"的机制（只动一次内部结构）
-3. **配置参考表**（`docs:config`）——③ 后端/基础设施项目最普遍要的标准文档
-4. **CLI 命令参考 + 类/函数索引**——④ 覆盖 SDK、库、命令行工具类型
-5. **跨语言 handler（TS → Go → Java）**——⑤ 覆盖"更多类型项目"
-6. **YAML 配置驱动 + `docsforge init`**——⑥ 声明项目类型与目录结构，一键生成骨架，monorepo 一次跑全量
-7. **缺失覆盖告警 + 规范 lint**——⑦ 质量从"生成"提升到"强制补齐"
-8. **站点渲染 / 时序图 / 插件生态**——⑧ 体验与生态收尾
+2. ~~渲染器按 token 分派~~ **（S1 已完成）**——新增产出物 = 新渲染器 + 新 token，机制已打通
+3. ~~配置参考表（S2）/ 模块·类·函数索引（S3）~~ **（已完成）**——后端、基础设施、库/SDK 最普遍要的标准文档已就位
+4. **YAML 配置驱动 + `docsforge init`（L1，WS-4）**——① 声明项目类型与目录结构，一键生成骨架，monorepo 一次跑全量；**当前最高优先**
+5. **CLI 命令参考（`docs:cli`，WS-5）**——② 覆盖命令行工具类型项目
+6. **跨语言 handler（TS → Go → Java）**——③ 覆盖"更多类型项目"
+7. **缺失覆盖告警 + 规范 lint**——④ 质量从"生成"提升到"强制补齐"
+8. **站点渲染 / 时序图 / 插件生态**——⑤ 体验与生态收尾
 
 > 括号内数字是**给开发者的内部编号**（S1–S4 / L1–L8），工程分层与依赖细节见
 > 研发视角补充（本章下方），一般使用者可忽略。
@@ -158,3 +159,5 @@ docsforge 仓库自带标准文档骨架（`docs/` + `docsforge.yaml`），因�
 | 08-01 | S2/S3 MVP 完成：`docs:config` 配置参考表 + Python handler 识别模块/类级配置常量（`_config_assignment`）| S2/S3 | ✅ 已实施 |
 | 08-01 | **下一步建议**：CLI 命令参考（docs:cli，index）与类/函数索引（module-index），覆盖 SDK/库/命令行工具 | S3/S1 | ⚖️ 讨论中 |
 | 08-01 | **module-index 渲染器已实现**：新增 `render_module_index` 令牌渲染器（按模块分组 + 类/函数/位置列）；handler 增强识别模块 docstring 和 class 定义；docsforge 全部 9 个模块已写 `docs:index` 注解；`docs/reference/index.md` 生成区已由工具自驱动填入并验证无漂移，api-routes 生成区同步与 verify 通过 | S3 | ✅ 已实施 |
+| 08-06 | **WS-3 需求核查**：S1–S4 全部完成（代码 + 自驱动文档双重确认）。吃狗粮基线：`docsforge check "docsforge/**/*.py" docs/reference/index.md --token module-index`（模块索引）与 `docsforge check examples/main.py docs/reference/api-routes.md --token api-routes`（路由示例）均无漂移；`docs/reference/config.md` 由 `examples/main.py` 的 `docs:config` 注解驱动 | S1–S4 | ✅ 已实施 |
+| 08-06 | **拆分下一批需求**：L1 YAML manifest 配置驱动 + `docsforge init`（最高优先，解锁标准目录骨架与按项目类型差异化）→ **WS-4**；CLI 命令参考渲染器（`docs:cli`）→ **WS-5**；修复 config 扫描误报（docstring 伪注解被解析：对 `docsforge/**/*.py` 的 config-reference 扫描误报 `PORT`/`render_config_reference` 两条）→ **WS-6** | L1 / — / — | 📋 待实施 |

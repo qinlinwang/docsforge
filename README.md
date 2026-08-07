@@ -69,8 +69,10 @@ docs/
 - 整套骨架由 `docsforge.yaml` 的 `structure:` 那段 manifest 描述
   （目标形态，配置驱动落地后由 `docsforge init` 一键生成）。
 
-> 说明：reference/ 下的生成区目前是**目标形态占位**；多文件扫描（S4）与
-> YAML manifest（L1）落地后，将真正由本工具的 `scan`/`init` 驱动填入。
+> 说明：reference/ 下的生成区已由本工具**自驱动**（吃狗粮）——`reference/index.md`
+>（module-index，扫 `docsforge/**/*.py`）与 `reference/api-routes.md`、`reference/config.md`
+>（路由/配置参考，扫 `examples/main.py`）均由 `docsforge scan` 填入、`docsforge check`
+> 校验无漂移。YAML manifest（L1，WS-4）落地后，整套骨架可由 `docsforge init` 一键生成。
 
 ## 命令
 
@@ -168,13 +170,14 @@ docsforge 在"文档即代码"工具生态中的定位与差异化依据，见�
 面向用户价值的功能清单与优先级（含具体场景、现状对照、实施顺序）见
 [`docs/design/roadmap.md`](docs/design/roadmap.md)。摘要：
 
-**下一里程碑：多文件 / 目录扫描** —— 让"一次生成整个项目文档"成立，
-是所有后续功能（配置驱动、跨语言覆盖）的共同土壤。
+**下一里程碑：L1 —— YAML manifest 配置驱动 + `docsforge init`（WS-4）**
+—— 声明项目类型 → 一键生成标准文档目录骨架，`scan`/`check` 从 manifest 读取配置。
 
-- 产出物：配置参考表（`docs:config`）、CLI 命令参考、模块/类/函数索引、图表
+- 已就位（S1–S4）：配置参考表（`docs:config`）、模块/类/函数索引、多文件/目录/glob 扫描、漂移检查
+- 下一批：CLI 命令参考（`docs:cli`，WS-5）、修复 config 扫描误报（WS-6）
 - 质量：缺失覆盖告警 + 规范 lint（把"文档必须补齐"变成机器强制）
-- 集成：YAML 配置驱动、站点化输出（MkDocs/VitePress）、插件生态（`entry_points`）
-- 覆盖：TypeScript → Go → Java 等更多语言/框架 handler
+- 集成：站点化输出（MkDocs/VitePress）、插件生态（`entry_points`）
+- 覆盖：TypeScript → Go → Java 等更多语言/框架 handler（L2）
 
 ## License
 
